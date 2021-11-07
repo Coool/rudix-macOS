@@ -1,15 +1,25 @@
+BuildRequires += $(BinDir)/autoconf	# autoconf
+BuildRequires += $(BinDir)/automake	# automake
+BuildRequires += $(BinDir)/pkg-config	# pkg-config
+
 include ../../Library/GNU.mk
 
 Title=		Exuberant Ctags
 Name=		ctags
-Version=	5.8
-Site=		http://ctags.sourceforge.net/
-Source=		http://downloads.sourceforge.net/ctags/$(Name)-$(Version).tar.gz
-License=	GPL
+Version=	5.9
+Site=		https://ctags.io/
+Source=		https://github.com/universal-ctags/ctags/archive/refs/tags/p$(Version).20211031.0.tar.gz
+License=	GPLv2+
+
+UncompressedName=ctags-p$(Version).20211031.0
 
 GnuConfigureExtra = --enable-etags
 MakeInstallExtra += prefix=$(DestDir)/$(Prefix)
 MakeInstallExtra += mandir=$(DestDir)/$(ManDir)
+
+define build_hook
+cd $(BuildDir) && ./autogen.sh && env $(EnvExtra) $(gnu_configure) && $(make) $(MakeExtra)
+endef
 
 define after_install_hook
 install	-m 644 $(SourceDir)/{FAQ,*.html} $(DestDir)/$(DocDir)/$(Name)
